@@ -5,19 +5,19 @@
  * Inspired by https://github.com/enyo/dropzone
  *
  * @param file {File} https://developer.mozilla.org/en-US/docs/Web/API/File
- * @param acceptedFiles {string}
+ * @param accept {string}
  * @returns {boolean}
  */
 
 
-export default function (file: File, acceptedFiles: string[]): boolean {
-  if (file && acceptedFiles) {
+export default function (file: File, accept: string[]): boolean {
+  if (file && accept.length > 0) {
 
     const fileName = file.name || "";
     const mimeType = (file.type || "").toLowerCase();
     const baseMimeType = mimeType.replace(/\/.*$/, "");
 
-    return acceptedFiles.some((type) => {
+    return accept.some((type) => {
       const validType = type.trim().toLowerCase();
       if (validType.charAt(0) === ".") {
         return fileName.toLowerCase().endsWith(validType);
