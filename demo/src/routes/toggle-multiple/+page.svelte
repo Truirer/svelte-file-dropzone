@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Dropzone from '../../../../src/lib/components/Dropzone.svelte';
 
-	let files = {
+	let files = $state({
 		accepted: [] as any[],
 		rejected: [] as any[]
-	};
+	});
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
@@ -12,7 +12,7 @@
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
 
-	let multiple = false;
+	let multiple = $state(false);
 </script>
 
 <section>

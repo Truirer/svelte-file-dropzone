@@ -18,28 +18,33 @@
   /**
    * @type {string | Array<string>}
    */
-  export let accept = undefined;
-  export let disabled = false;
-  export let getFilesFromEvent = fromEvent;
-  export let maxSize = Infinity;
-  export let minSize = 0;
-  export let multiple = true;
-  export let preventDropOnDocument = true;
-  export let noClick = false;
-  export let noKeyboard = false;
-  export let noDrag = false;
-  export let noDragEventsBubbling = false;
-  export let containerClasses = "";
-  export let containerStyles = "";
-  export let disableDefaultStyles = false;
-  export let name = "";
-  export let inputElement = undefined;
-  export let required = false;
+
+  let {
+    accept = undefined,
+    disabled = false,
+    getFilesFromEvent = fromEvent,
+    maxSize = Infinity,
+    minSize = 0,
+    multiple = true,
+    preventDropOnDocument = true,
+    noClick = false,
+    noKeyboard = false,
+    noDrag = false,
+    noDragEventsBubbling = false,
+    containerClasses = "",
+    containerStyles = "",
+    disableDefaultStyles = false,
+    name = "",
+    inputElement = undefined,
+    required = false,
+    children
+  } = $props();
+
   const dispatch = createEventDispatcher();
 
   //state
 
-  let state = {
+  let state = $state({
     isFocused: false,
     isFileDialogActive: false,
     isDragActive: false,
@@ -48,9 +53,9 @@
     draggedFiles: [],
     acceptedFiles: [],
     fileRejections: []
-  };
+  });
 
-  let rootRef;
+  let rootRef = $state(null);
 
   function resetState() {
     state.isFileDialogActive = false;
@@ -243,15 +248,15 @@
     resetState();
   }
 
-  $: composeHandler = fn => (disabled ? null : fn);
+  let composeHandler = $derived(fn => (disabled ? null : fn));
+  let composeKeyboardHandler = $derived(fn => (noKeyboard ? null : composeHandler(fn)));
+  let composeDragHandler = $derived(fn => (noDrag ? null : composeHandler(fn)));
 
-  $: composeKeyboardHandler = fn => (noKeyboard ? null : composeHandler(fn));
-
-  $: composeDragHandler = fn => (noDrag ? null : composeHandler(fn));
-
-  $: defaultPlaceholderString = multiple
-    ? "Drag 'n' drop some files here, or click to select files"
-    : "Drag 'n' drop a file here, or click to select a file";
+  let defaultPlaceholderString = $derived(
+    multiple
+      ? "Drag 'n' drop some files here, or click to select files"
+      : "Drag 'n' drop a file here, or click to select a file"
+  );
 
   function stopPropagation(event) {
     if (noDragEventsBubbling) {
@@ -266,7 +271,7 @@
     }
   }
 
-  let dragTargetsRef = [];
+  let dragTargetsRef = $state([]);
   function onDocumentDrop(event) {
     if (!preventDropOnDocument) {
       return;
@@ -315,15 +320,14 @@
   class="{disableDefaultStyles ? '' : 'dropzone'}
   {containerClasses}"
   style={containerStyles}
-  on:keydown={composeKeyboardHandler(onKeyDownCb)}
-  on:focus={composeKeyboardHandler(onFocusCb)}
-  on:blur={composeKeyboardHandler(onBlurCb)}
-  on:click={composeHandler(onClickCb)}
-  on:dragenter={composeDragHandler(onDragEnterCb)}
-  on:dragover={composeDragHandler(onDragOverCb)}
-  on:dragleave={composeDragHandler(onDragLeaveCb)}
-  on:drop={composeDragHandler(onDropCb)}
-  {...$$restProps}
+  onkeydown={composeKeyboardHandler(onKeyDownCb)}
+  onfocus={composeKeyboardHandler(onFocusCb)}
+  onblur={composeKeyboardHandler(onBlurCb)}
+  onclick={composeHandler(onClickCb)}
+  ondragenter={composeDragHandler(onDragEnterCb)}
+  ondragover={composeDragHandler(onDragOverCb)}
+  ondragleave={composeDragHandler(onDragLeaveCb)}
+  ondrop={composeDragHandler(onDropCb)}
 >
   <input
     accept={accept?.toString()}
@@ -333,14 +337,16 @@
     {name}
     autocomplete="off"
     tabindex="-1"
-    on:change={onDropCb}
-    on:click={onInputElementClick}
+    onchange={onDropCb}
+    onclick={onInputElementClick}
     bind:this={inputElement}
     style="display: none;"
   />
-  <slot>
+  {#if children}
+    {@render children()}
+  {:else}
     <p>{defaultPlaceholderString}</p>
-  </slot>
+  {/if}
 </div>
 
 <style>

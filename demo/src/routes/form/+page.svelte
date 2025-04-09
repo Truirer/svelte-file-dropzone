@@ -3,7 +3,7 @@
 	import { page } from '$app/stores';
 	import Dropzone from '../../../../src/lib/components/Dropzone.svelte';
 
-	let files: { name: string }[] = [];
+	let files: { name: string }[] = $state([]);
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles } = e.detail;
