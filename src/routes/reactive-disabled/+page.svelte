@@ -8,7 +8,6 @@
 	});
 
 	function handleFilesSelect(e: FileDropResult) {
-		console.log(e);
 		const { acceptedFiles, fileRejections } = e;
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
