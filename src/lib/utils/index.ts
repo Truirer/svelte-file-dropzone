@@ -73,7 +73,7 @@ export function isPropagationStopped(event: Event) {
   return false;
 }
 
-export function isEvtWithFiles(event: Event & { currentTarget: HTMLInputElement } | DragEvent) {
+export function isEvtWithFiles(event: Event | DragEvent) {
   if ('dataTransfer' in event && event.dataTransfer) {
     return Array.prototype.some.call(
       event.dataTransfer.types,

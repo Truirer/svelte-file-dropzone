@@ -8,8 +8,9 @@
 		isPropagationStopped,
 		TOO_MANY_FILES_REJECTION
 	} from '../utils/index';
-	import { onDestroy, createEventDispatcher } from 'svelte';
+	import { onDestroy } from 'svelte';
 	import type { DropzoneProps, DropzoneStateProps, RejectedFile } from './types';
+	import type { EventHandler } from 'svelte/elements';
 	//props
 	/**
 	 * Set accepted file types.
@@ -37,11 +38,17 @@
 		name = '',
 		inputElement,
 		required = false,
-		children
+		children,
+		onDragenter,
+		onDragover,
+		onDragleave,
+		onFiledropped,
+		onDrop,
+		onDroprejected,
+		onDropaccepted,
+		onFiledialogcancel
 	}: DropzoneProps = $props();
-	let dragTargetsRef: HTMLElement[] = $state([]);
-
-	const dispatch = createEventDispatcher();
+	let dragTargetsRef: EventTarget[] = $state([]);
 
 	//state
 
@@ -112,11 +119,11 @@
 		}
 	}
 
-	function onDragEnterCb(event: DragEvent) {
+	const onDragEnterCb: EventHandler<DragEvent> = (event) => {
 		event.preventDefault();
 		stopPropagation(event);
-		const target = event.target as HTMLElement;
-		dragTargetsRef = [...dragTargetsRef, target];
+		const target = event.target;
+		if (target) dragTargetsRef = [...dragTargetsRef, target];
 
 		if (isEvtWithFiles(event)) {
 			Promise.resolve(getFilesFromEvent(event) as Promise<File[]>).then((draggedFiles) => {
@@ -127,14 +134,12 @@
 				dropzoneState.draggedFiles = draggedFiles;
 				dropzoneState.isDragActive = true;
 
-				dispatch('dragenter', {
-					dragEvent: event
-				});
+				onDragenter?.(event);
 			});
 		}
-	}
+	};
 
-	function onDragOverCb(event: DragEvent) {
+	const onDragOverCb: EventHandler<DragEvent> = (event) => {
 		event.preventDefault();
 		stopPropagation(event);
 
@@ -145,20 +150,18 @@
 		}
 
 		if (isEvtWithFiles(event)) {
-			dispatch('dragover', {
-				dragEvent: event
-			});
+			onDragover?.(event);
 		}
 
 		return false;
-	}
+	};
 
-	function onDragLeaveCb(event: DragEvent) {
+	const onDragLeaveCb: EventHandler<DragEvent> = (event) => {
 		event.preventDefault();
 		stopPropagation(event);
 
 		// Only deactivate once the dropzone and all children have been left
-		const targets = dragTargetsRef.filter((target) => rootRef && rootRef.contains(target));
+		const targets = dragTargetsRef.filter((target) => rootRef && rootRef.contains(target as Node));
 		// Make sure to remove a target present multiple times only once
 		// (Firefox may fire dragenter/dragleave multiple times on the same element)
 		const target = event.target as HTMLElement;
@@ -175,22 +178,18 @@
 		dropzoneState.draggedFiles = [];
 
 		if (isEvtWithFiles(event)) {
-			dispatch('dragleave', {
-				dragEvent: event
-			});
+			onDragleave?.(event);
 		}
-	}
+	};
 
-	function onDropCb(event: (Event & { currentTarget: HTMLInputElement }) | DragEvent) {
+	const onDropCb = (event: DragEvent | Event) => {
 		event?.preventDefault();
 		stopPropagation(event);
 
 		dragTargetsRef = [];
 
 		if (isEvtWithFiles(event)) {
-			dispatch('filedropped', {
-				event
-			});
+			onFiledropped?.(event);
 
 			Promise.resolve(getFilesFromEvent(event) as Promise<File[]>).then((files) => {
 				if (isPropagationStopped(event) && !noDragEventsBubbling) {
@@ -225,22 +224,21 @@
 
 				dropzoneState.acceptedFiles = acceptedFiles;
 				dropzoneState.fileRejections = fileRejections;
-
-				dispatch('drop', {
+				onDrop?.({
 					acceptedFiles,
 					fileRejections,
 					event
 				});
 
 				if (fileRejections.length > 0) {
-					dispatch('droprejected', {
+					onDroprejected?.({
 						fileRejections,
 						event
 					});
 				}
 
 				if (acceptedFiles.length > 0) {
-					dispatch('dropaccepted', {
+					onDropaccepted?.({
 						acceptedFiles,
 						event
 					});
@@ -248,15 +246,13 @@
 			});
 		}
 		resetState();
-	}
+	};
 
-	let composeHandler = $derived(<T extends Event>(fn: (event: T) => void) =>
-		disabled ? null : fn
-	);
-	let composeKeyboardHandler = $derived(<T extends Event>(fn: (event: T) => void) =>
+	let composeHandler = $derived(<T extends Event>(fn: EventHandler<T>) => (disabled ? null : fn));
+	let composeKeyboardHandler = $derived(<T extends Event>(fn: EventHandler<T>) =>
 		noKeyboard ? null : composeHandler(fn)
 	);
-	let composeDragHandler = $derived((fn: (event: DragEvent) => void) =>
+	let composeDragHandler = $derived((fn: EventHandler<DragEvent>) =>
 		noDrag ? null : composeHandler(fn)
 	);
 
@@ -302,7 +298,7 @@
 
 					if (!files?.length) {
 						dropzoneState.isFileDialogActive = false;
-						dispatch('filedialogcancel');
+						onFiledialogcancel?.();
 					}
 				}
 			}, 300);

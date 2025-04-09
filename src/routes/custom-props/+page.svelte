@@ -1,13 +1,14 @@
 <script lang="ts">
 	import Dropzone from '$lib/components/Dropzone.svelte';
+	import type { FileDropResult } from '$lib/components/types';
 
 	let files = $state({
 		accepted: [] as any[],
 		rejected: [] as any[]
 	});
 
-	function handleFilesSelect(e: any) {
-		const { acceptedFiles, fileRejections } = e.detail;
+	function handleFilesSelect(e: FileDropResult) {
+		const { acceptedFiles, fileRejections } = e;
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
@@ -19,7 +20,7 @@
 
 <section>
 	<button onclick={clickToUpload}>Click to upload</button>
-	<Dropzone on:drop={handleFilesSelect} />
+	<Dropzone onDrop={handleFilesSelect} />
 
 	<ol>
 		{#each files.accepted as item}

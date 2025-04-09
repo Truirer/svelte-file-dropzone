@@ -2,17 +2,18 @@
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
 	import Dropzone from '$lib/components/Dropzone.svelte';
+	import type { FileDropResult } from '$lib/components/types';
 
 	let files: { name: string }[] = $state([]);
 
-	function handleFilesSelect(e: any) {
-		const { acceptedFiles } = e.detail;
+	function handleFilesSelect(e: FileDropResult) {
+		const { acceptedFiles } = e;
 		files = [...acceptedFiles];
 	}
 </script>
 
 <form method="POST" action="?/postFiles" use:enhance enctype="multipart/form-data">
-	<Dropzone on:drop={handleFilesSelect} name="files" />
+	<Dropzone onDrop={handleFilesSelect} name="files" />
 
 	<button>Go</button>
 </form>

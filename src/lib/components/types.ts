@@ -1,5 +1,6 @@
 import type { ErrorTypes } from "$lib/utils/types"
 import type { Snippet } from "svelte"
+import type { ChangeEventHandler, EventHandler } from "svelte/elements"
 
 export type RejectedFile = { file: File, errors: ErrorTypes[] }
 export type DropzoneStateProps = {
@@ -13,6 +14,19 @@ export type DropzoneStateProps = {
     fileRejections: RejectedFile[]
 }
 
+export type FileDropResult = {
+    acceptedFiles: File[],
+    fileRejections: RejectedFile[],
+    event: DragEvent | Event
+}
+export type FileDropRejectedResult = {
+    fileRejections: RejectedFile[],
+    event: DragEvent | Event
+}
+export type FileDropAcceptedResult = {
+    acceptedFiles: File[],
+    event: DragEvent | Event
+}
 export type DropzoneProps = {
     accept?: string[],
     disabled?: boolean,
@@ -31,5 +45,13 @@ export type DropzoneProps = {
     name?: string,
     inputElement?: HTMLInputElement,
     required?: boolean,
-    children?: Snippet
+    children?: Snippet,
+    onDragenter?: EventHandler<DragEvent>,
+    onDragover?: EventHandler<DragEvent>,
+    onDragleave?: EventHandler<DragEvent>,
+    onFiledropped?: (event: DragEvent | Event) => void,
+    onDrop?: (data: FileDropResult) => void,
+    onDroprejected?: (data: FileDropRejectedResult) => void
+    onDropaccepted?: (data: FileDropAcceptedResult) => void
+    onFiledialogcancel?: () => void
 }

@@ -1,13 +1,15 @@
 <script lang="ts">
 	import Dropzone from '$lib/components/Dropzone.svelte';
+	import type { FileDropResult } from '$lib/components/types';
 
 	let files = $state({
 		accepted: [] as any[],
 		rejected: [] as any[]
 	});
 
-	function handleFilesSelect(e: any) {
-		const { acceptedFiles, fileRejections } = e.detail;
+	function handleFilesSelect(e: FileDropResult) {
+		console.log(e);
+		const { acceptedFiles, fileRejections } = e;
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
@@ -20,7 +22,7 @@
 
 <section>
 	<label>Disable dropzone <input type="checkbox" bind:checked={disabled} /></label>
-	<Dropzone {disabled} on:drop={handleFilesSelect} containerStyles={dropAddedStyles} />
+	<Dropzone {disabled} onDrop={handleFilesSelect} containerStyles={dropAddedStyles} />
 
 	<ol>
 		{#each files.accepted as item}
