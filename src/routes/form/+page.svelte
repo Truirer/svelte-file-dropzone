@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms';
 	import { page } from '$app/stores';
-	import Dropzone from '../../../../src/lib/components/Dropzone.svelte';
+	import Dropzone from '$lib/components/Dropzone.svelte';
 
 	let files: { name: string }[] = $state([]);
 

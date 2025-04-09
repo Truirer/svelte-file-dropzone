@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Dropzone from '../../../../src/lib/components/Dropzone.svelte';
+	import Dropzone from '$lib/components/Dropzone.svelte';
 
 	let files = $state({
 		accepted: [] as any[],
@@ -8,16 +8,14 @@
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
+		console.log(acceptedFiles, fileRejections, 'fileRejections');
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
-
-	let multiple = $state(false);
 </script>
 
 <section>
-	<label>Multiple <input type="checkbox" bind:checked={multiple} /></label>
-	<Dropzone on:drop={handleFilesSelect} {multiple} />
+	<Dropzone on:drop={handleFilesSelect} />
 
 	<ol>
 		{#each files.accepted as item}

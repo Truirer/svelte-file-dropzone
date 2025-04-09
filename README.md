@@ -1,92 +1,38 @@
-# svelte-file-dropzone
+# sv
 
-[![NPM](https://img.shields.io/npm/v/svelte-file-dropzone.svg)](https://www.npmjs.com/package/svelte-file-dropzone)
-[![npm bundle size (minified + gzip)](https://img.shields.io/bundlephobia/minzip/svelte-file-dropzone.svg)](https://www.npmjs.com/package/svelte-file-dropzone)
+Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
 
-SvelteJS component for file upload and dropzone.The component is Svelte implementation of [react-dropzone](https://github.com/react-dropzone/react-dropzone).
+## Creating a project
 
-## Demo
+If you're seeing this, you've probably already done this step. Congrats!
 
-[Click here for Storybook link](https://svelte-file-dropzone.netlify.app/?path=/info/examples--basic-dropzone)
+```bash
+# create a new project in the current directory
+npx sv create
 
-## Installation
-
-```
-npm install svelte-file-dropzone
-
-or
-
-yarn add svelte-file-dropzone
+# create a new project in my-app
+npx sv create my-app
 ```
 
-## Usage
+## Developing
 
-```svelte
-<script>
-  import Dropzone from "svelte-file-dropzone";
+Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
 
-  let files = {
-    accepted: [],
-    rejected: []
-  };
+```bash
+npm run dev
 
-  function handleFilesSelect(e) {
-    const { acceptedFiles, fileRejections } = e.detail;
-    files.accepted = [...files.accepted, ...acceptedFiles];
-    files.rejected = [...files.rejected, ...fileRejections];
-  }
-</script>
-
-<Dropzone on:drop={handleFilesSelect} />
-<ol>
-  {#each files.accepted as item}
-    <li>{item.name}</li>
-  {/each}
-</ol>
+# or start the server and open the app in a new browser tab
+npm run dev -- --open
 ```
 
-## API
+## Building
 
-### Props
+To create a production version of your app:
 
-| Prop Name             | Description                                                                              | Default Value |
-| --------------------- | ---------------------------------------------------------------------------------------- | ------------- |
-| accept                | Set accepted file types. See https://github.com/okonet/attr-accept for more information. | undefined     |
-| disabled              |                                                                                          | false         |
-| maxSize               |                                                                                          | Infinity      |
-| minSize               |                                                                                          | 0             |
-| multiple              | if true, multiple files can be selected at once                                          | true          |
-| preventDropOnDocument | 1231                                                                                     | true          |
-| noClick               | disable click events                                                                     | false         |
-| noKeyboard            | disable keyboard events                                                                  | false         |
-| noDrag                | disable drag events                                                                      | false         |
-| containerClasses      | custom container classes                                                                 | ""            |
-| containerStyles       | custom inline container styles                                                           | ""            |
-| disableDefaultStyles  | don't apply default styles to container                                                  | false         |
-| inputElement          | reference to inputElement                                                                | undefined     |
-| required              | html5 required attribute added to input                                                  | false         |
+```bash
+npm run build
+```
 
-### Events
+You can preview the production build with `npm run preview`.
 
-| Event Name       | Description | `event.detail` info                    |
-| ---------------- | ----------- | -------------------------------------- |
-| dragenter        |             | `{dragEvent: event}`                   |
-| dragover         |             | `{dragEvent: event}`                   |
-| dragleave        |             | `{dragEvent: event}`                   |
-| drop             |             | `{acceptedFiles,fileRejections,event}` |
-| filedropped      |             | `{event}`                              |
-| droprejected     |             | `{fileRejections,event}`               |
-| dropaccepted     |             | `{acceptedFiles,event}`                |
-| filedialogcancel |             |                                        |
-
-### Examples
-
-[Click here](https://github.com/thecodejack/svelte-file-dropzone/tree/master/stories/views) to view stories implementation
-
-## Credits
-
-Component is reimplementation [react-dropzone](https://github.com/react-dropzone/react-dropzone). Complete credit goes to author and contributors of [react-dropzone](https://github.com/react-dropzone/react-dropzone).
-
-## License
-
-MIT
+> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Dropzone from '../../../../src/lib/components/Dropzone.svelte';
+	import Dropzone from '$lib/components/Dropzone.svelte';
 
 	let files = $state({
 		accepted: [] as any[],
