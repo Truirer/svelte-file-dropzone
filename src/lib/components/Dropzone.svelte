@@ -46,7 +46,8 @@
 		onDrop,
 		onDroprejected,
 		onDropaccepted,
-		onFiledialogcancel
+		onFiledialogcancel,
+		...rest
 	}: DropzoneProps = $props();
 	let dragTargetsRef: EventTarget[] = $state([]);
 
@@ -332,6 +333,7 @@
 	ondragover={composeDragHandler(onDragOverCb)}
 	ondragleave={composeDragHandler(onDragLeaveCb)}
 	ondrop={composeDragHandler(onDropCb)}
+	{...rest}
 >
 	<input
 		accept={accept?.join(',')}
