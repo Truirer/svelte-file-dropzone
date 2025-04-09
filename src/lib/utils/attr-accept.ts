@@ -9,16 +9,15 @@
  * @returns {boolean}
  */
 
-export default function(file, acceptedFiles) {
+
+export default function (file: File, acceptedFiles: string[]): boolean {
   if (file && acceptedFiles) {
-    const acceptedFilesArray = Array.isArray(acceptedFiles)
-      ? acceptedFiles
-      : acceptedFiles.split(",");
+
     const fileName = file.name || "";
     const mimeType = (file.type || "").toLowerCase();
     const baseMimeType = mimeType.replace(/\/.*$/, "");
 
-    return acceptedFilesArray.some((type) => {
+    return acceptedFiles.some((type) => {
       const validType = type.trim().toLowerCase();
       if (validType.charAt(0) === ".") {
         return fileName.toLowerCase().endsWith(validType);

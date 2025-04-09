@@ -8,14 +8,13 @@
 
 	function handleFilesSelect(e: any) {
 		const { acceptedFiles, fileRejections } = e.detail;
-		console.log(acceptedFiles, fileRejections, 'fileRejections');
 		files.accepted = [...files.accepted, ...acceptedFiles];
 		files.rejected = [...files.rejected, ...fileRejections];
 	}
 </script>
 
 <section>
-	<Dropzone on:drop={handleFilesSelect} />
+	<Dropzone accept={['image/png']} on:drop={handleFilesSelect} />
 
 	<ol>
 		{#each files.accepted as item}

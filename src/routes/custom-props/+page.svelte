@@ -18,8 +18,8 @@
 </script>
 
 <section>
-	<button on:click={clickToUpload}>Click to upload</button>
-	<Dropzone on:drop={handleFilesSelect} id="xyz" />
+	<button onclick={clickToUpload}>Click to upload</button>
+	<Dropzone on:drop={handleFilesSelect} />
 
 	<ol>
 		{#each files.accepted as item}
